@@ -3,10 +3,12 @@
 #include "SoftRenderer.h"
 #include "GDIHelper.h"
 #include "Renderer.h"
-#include "Vector2.h"
+
 #include "Vector.h"
 #include "IntPoint.h"
 
+unsigned int ColorAdd;
+unsigned int ColorAdd2;
 bool IsInRange(int x, int y);
 void PutPixel(int x, int y);
 
@@ -17,7 +19,7 @@ bool IsInRange(int x, int y)
 
 void PutPixel(const IntPoint& InPt)
 {
-	PutPixel(InPt.x, InPt.y);
+	PutPixel(InPt.X, InPt.Y);
 }
 
 void PutPixel(int x, int y)
@@ -33,70 +35,97 @@ void PutPixel(int x, int y)
 void UpdateFrame(void)
 {
 	// Buffer Clear
+
 	SetColor(32, 128, 255);
+	
 	Clear();
 
+
+	ColorAdd += 1;
+	if (ColorAdd >= 255)
+	{
+		ColorAdd = 1;
+	}
 	// Draw
-	SetColor(255, 0, 0);
-	PutPixel(0, 0);
+	SetColor(ColorAdd, ColorAdd, ColorAdd);
 
-
-	/*Matrix2 scaleMat;
-	scaleMat.SetScale(2.f, 0.5f);
-
-	Matrix2 RotMat;
-	RotMat.SetRotation(30.f);
-
-	Matrix2 SRMat = scaleMat * RotMat;
-	Matrix2 RSMat = RotMat * scaleMat;*/
-
-	// Draw a circle with radius 100
-	Vector2 center(0.f, 0.f);
+	// Draw a filled circle with radius 100
+	Vector3 center(0.0f, 0.0f);
 	float radius = 100.f;
 	int nradius = (int)radius;
 
 	static float degree = 0;
-	degree += 1.f;
-	degree = fmodf(degree, 360.f);
+	degree += 2;
+	degree = fmodf(degree, 360.0f); //2 / 360 = degree¿¡
 
-	Matrix2 rotmat;
-	rotmat.SetRotation(degree);
+	Matrix3 rotMat;
+	rotMat.SetRotation(degree);
+	rotMat.Transpose();
 
-	for (int i = -nradius; i <= nradius; i++)
-	{
-		for (int j = -nradius; j <= nradius; j++)
-		{
-			PutPixel(Vector2(i, j) * rotmat);
-		}
-	}
+	float maxScale = 0.5;
+	float scale = ((sinf(Deg2Rad(degree * 2)) + 1) * 0.5) * maxScale;
+	if (scale < 0.1f) scale = 0.1f;
 
-	//Vector2 startVec(radius, 0.f);
+	Matrix3 scaleMat;
+	scaleMat.SetScale(scale, scale, scale);
 
-	//for (int i = 0; i < 360; i++)
-	//{
-	//	Matrix2 rotMat;
-	//	rotMat.SetRotation((float)i);
-	//	PutPixel(startVec * rotMat);
+	float maxPos = 100;
+	float pos = sinf(Deg2Rad(degree)) * maxPos;
+	Matrix3 translationMat;
+	translationMat.SetTranslation(pos, pos);
 
-	//}
-
-	for (int i = -nradius; i <= nradius; i++)
-	{
-		for (int j = 0/*-nradius*/; j <= nradius; j++)
-		{
-			IntPoint pt(i, j);
-			Vector2 ptVec = pt.ToVector2();
-			if(Vector2::DistSquared(center, pt.ToVector2()) <= radius * radius)
-				{
-				//IntPoint scaledPt(ptVec * scaleMat);
-				//IntPoint rotatedPt(ptVec * RotMat);
-				//IntPoint SRpt(ptVec * SRMat);
-				//IntPoint RSpt(ptVec * RSMat);
-				//PutPixel(RSpt);
-				}
-		}
-	}
+	Matrix3 SR = scaleMat * rotMat;
+	Matrix3 TRS = translationMat * rotMat * scaleMat;
 	
+
+		for (int i = -nradius; i <= nradius; i++)
+		{
+			for (int j = -nradius; j <= nradius; j++)
+			{
+				PutPixel(Vector3((float)i, (float)j) * SR);
+			}
+		}
+		
+
+		float radius2 = 10.0f;
+		int nradius2 = (int)radius;
+
+		
+		static float degree2 = 0;
+		degree2 += 1;
+		degree2 = fmodf(degree2, 360.0f);
+
+		float maxPos2 = 500;
+		float pos2 = sinf(Deg2Rad(degree2)) * maxPos2;
+
+		Matrix3 translationMat2;
+		translationMat2.SetTranslation(pos2, pos2);
+
+		Matrix3 Matrix = translationMat2;
+
+		ColorAdd2 += 5;
+		if (ColorAdd2 >= 255)
+		{
+			ColorAdd2 = 1;
+		}
+		SetColor(ColorAdd2, ColorAdd2, 1);
+
+		
+		Vector3 center2(0.0f, 0.0f);
+
+		for (int i = -nradius2; i <= nradius2; i++)
+		{
+			for (int j = -nradius2; j <= nradius2; j++)
+			{
+				Vector3 vertex(i, j);
+				if (Vector3::Dist(center2, vertex) <= radius)
+				{
+					PutPixel(Vector3(i, j) * Matrix);
+				}
+
+			}
+		}
+
 
 	// Buffer Swap 
 	BufferSwap();

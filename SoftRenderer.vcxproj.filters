@@ -49,7 +49,7 @@
       <Filter>Math</Filter>
     </ClInclude>
     <ClInclude Include="Vector.h">
-      <Filter>GDI</Filter>
+      <Filter>Math</Filter>
     </ClInclude>
     <ClInclude Include="IntPoint.h">
       <Filter>Renderer</Filter>
@@ -58,7 +58,13 @@
       <Filter>Math</Filter>
     </ClInclude>
     <ClInclude Include="Matrix.h">
-      <Filter>GDI</Filter>
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector3.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Matrix3.h">
+      <Filter>Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -77,8 +83,14 @@
     <ClCompile Include="Vector2.cpp">
       <Filter>Math</Filter>
     </ClCompile>
+    <ClCompile Include="Vector3.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
     <ClCompile Include="Matrix2.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Matrix3.cpp">
+      <Filter>Math</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

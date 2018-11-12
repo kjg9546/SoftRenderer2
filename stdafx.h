@@ -29,6 +29,5 @@
 
 FORCEINLINE float Deg2Rad(float degree)
 {
-	return degree * PI / 180.f;
+	return degree * PI / 180.0f;
 }
-
